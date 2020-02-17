@@ -9,30 +9,19 @@ import IconButton from "@material-ui/core/IconButton/IconButton";
 import Badge from '@material-ui/core/Badge';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Divider from "@material-ui/core/Divider";
-import { authService } from "../services/rest_service";
 
 type Props = {
-  parentCallback: any;
   data: Product;
 };
 
-const ListItem: React.FunctionComponent<Props> = ({ data, parentCallback }) => {
-  const addToCartHandler = async (data: Product) => {
-    const result = await authService.addToCart(data);
-    if (result) {
-      parentCallback(data);
-    }
-  };
+const ListItem: React.FunctionComponent<Props> = ({ data }) => {
 
   return (
     <>
       <ListItemMaterial>
         <ListItemTextMaterial primary={data.nome} />
         <ListItemSecondaryAction>
-        <IconButton
-          aria-label="cart"
-          onClick={() => addToCartHandler(data)}
-          >
+        <IconButton aria-label="cart">
           <Badge badgeContent={"+"} color="secondary">
             <ShoppingCartIcon />
           </Badge>

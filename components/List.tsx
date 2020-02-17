@@ -1,63 +1,59 @@
-import React, { useState } from "react";
-import { Product } from "../interfaces";
-import ListItem from "./ListItem";
+﻿import React, { Component } from "react";
+import { connect } from 'react-redux';
+import { Product } from "../store/ducks/products/types";
+import * as CartItemActions from "../store/ducks/products/actions";
+import { ApplicationState } from "../store";
+import { bindActionCreators, Dispatch } from "redux";
 
-import { makeStyles } from "@material-ui/core/styles";
 import ListMaterial from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid/Grid";
+import ListItem from "./ListItem";
 
-export type ProductInputs = {
-  product: string;
-};
+interface StateProps {
+  products: Product[]
+}
 
-const useStyles = makeStyles(theme => ({
-  "@global": {
-    body: {
-      backgroundColor: theme.palette.common.white
-    }
-  },
-  container: {
-    padding: "30px 15px 0",
-    maxWidth: "328px",
-    margin: "auto"
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: "bold",
-    padding: "30px 15px 0"
+interface DispatchProps {
+  loadRequest(): void
+}
+
+type Props = StateProps & DispatchProps;
+
+class Cart extends Component<Props> {
+  componentDidMount() {
+    const { loadRequest } = this.props;
+    loadRequest();
   }
-}));
 
-type Props = {
-  items: Product[];
-};
+  render() {
+    const { products } = this.props;
 
-const List: React.FunctionComponent<Props> = ({ items }) => {
-  const classes = useStyles();
+    return (
+      <>
+        <Grid>
+        <div>
+            <Typography variant="h1">
+            Produtos da Categoria
+            </Typography>
+            <ListMaterial>
+            {(products.length) ? products.map(item => (
+                <ListItem data={item} key={item.id} />
+            )):(
+                <div>Nenhum produto encontrado.</div>
+            )}
+            </ListMaterial>
+        </div>
+        </Grid>
+      </>
+    );
+  }
+}
 
-  const [produtos, setProducts] = useState(items);
+const mapStateToProps = (state: ApplicationState) => ({
+    products: state.products.data,
+});
 
-  const callback = async (id: number) => {
-    setProducts(produtos.filter(item => item.id !== id));
-  };
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(CartItemActions, dispatch);
 
-  return (
-    <Grid className={classes.container}>
-      <div>
-        <Typography variant="h1" className={classes.title}>
-          Produtos da Categoria
-        </Typography>
-        <ListMaterial>
-          {(produtos.length) ? produtos.map(item => (
-            <ListItem parentCallback={callback} data={item} key={item.id} />
-          )):(
-            <div>Nenhum produto encontrado.</div>
-          )}
-        </ListMaterial>
-      </div>
-    </Grid>
-  );
-};
-
-export default List;
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

@@ -5,6 +5,8 @@ import { authService } from "../services/rest_service";
 
 import CategoryToolbar from "../components/CategoryToolbar";
 import { Product } from "../interfaces";
+import { Provider } from "react-redux";
+import store from "../store";
 
 type Props = AuthProps & {
   message: string;
@@ -15,7 +17,7 @@ function Page(props: Props) {
   return (
     <>
       <CategoryToolbar />
-      <List items={props.produtos} />
+      <Provider store={store}><List /></Provider>
     </>
   );
 }
